@@ -1,6 +1,7 @@
-TD;LR
-=====
-Exemple of ruby connector TCP/IP, binary data, all by intenal DSL, Ruby based.
+2w
+==
+Exemple of ruby connector TCP/IP, which transport some binary data.
+All coded with  (internal) DSL, Ruby based.
 
 TODO: include a GUI, with gui DSL of cource :)
 
