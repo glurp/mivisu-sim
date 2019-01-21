@@ -1,3 +1,5 @@
+#!/usr/bin/ruby
+#Copyright (c) 2019 Regis d'Aubarede, The MIT License
 # encoding: ASCII-8BIT
 
 ############################################################################

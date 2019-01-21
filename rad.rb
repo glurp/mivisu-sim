@@ -1,3 +1,6 @@
+#!/usr/bin/ruby
+#Copyright (c) 2019 Regis d'Aubarede, The MIT License
+
 ############################################################################
 #   rad.rb : Simulateur RAD / Mivisu SSIL V2
 #

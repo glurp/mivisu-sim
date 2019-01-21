@@ -1,3 +1,9 @@
+TD;LR
+=====
+Exemple of ruby connector TCP/IP, binary data, all by intenal DSL, Ruby based.
+
+TODO: include a GUI, with gui DSL of cource :)
+
 Presentation
 ============
 
@@ -21,8 +27,7 @@ Prerequis
 installer ruby 2.3 ou superieur.
 
 installer les dependances :
-> gem install bindata
-> gem install minitcp
+> gem install bindata minitcp
 
 **Bindata** : definie un DSL permettant de creer des classes Codeur/Decodeur de trames binaire : voir
  https://github.com/dmendel/bindata/wiki
@@ -33,9 +38,9 @@ Fichiers
 ========
 
 rad.rb    :	 serveur SSIL, emission mesure RAD ( QTV ) pour un ensemble de station/capteurs
-client.rb :	 client SSIL, print tous ce qui passe (pas de login...)
 model.rb  :  class codec des trames SSIL mivisu, basé sur bindata, auto-test integré
-config.rb :  TODO extraction d'une config saia-miserII pour simuler tout ce qui est a configurer
+config-from-saia.rb :  extraction d'une config RRTDB saia (scada) pour generer la config a simuler
+client.rb :	 client SSIL, print tous ce qui passe (pas de login...)
 
 Configuration
 ============
@@ -44,3 +49,8 @@ TODO
 
 voir le source rad.rb
 
+License
+======
+
+The MIT License
+Copyright (c) 2019 Regis d'Aubarede,
