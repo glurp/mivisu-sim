@@ -38,10 +38,10 @@ installer les dependances :
 Fichiers
 ========
 
-rad.rb    |:|	 serveur SSIL, emission mesure RAD ( QTV ) pour un ensemble de station/capteurs
-model.rb  |:|  class codec des trames SSIL mivisu, basé sur bindata, auto-test integré
-config-from-saia.rb |:|  extraction d'une config RRTDB saia (scada) pour generer la config a simuler
-client.rb |:|	 client SSIL, print tous ce qui passe (pas de login...)
+| rad.rb    |:|	 serveur SSIL, emission mesure RAD ( QTV ) pour un ensemble de station/capteurs
+| model.rb  |:|  class codec des trames SSIL mivisu, basé sur bindata, auto-test integré
+| config-from-saia.rb |:|  extraction d'une config RRTDB saia (scada) pour generer la config a simuler
+| client.rb |:|	 client SSIL, print tous ce qui passe (pas de login...)
 
 Configuration
 ============
