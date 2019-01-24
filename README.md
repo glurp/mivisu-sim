@@ -55,13 +55,6 @@ Fichiers
 * process*.rb
 
 
-Configuration
-============
-
-TODO
-
-voir le source rad.rb
-
 License
 ======
 
