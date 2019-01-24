@@ -23,9 +23,9 @@ Usage:
 ```
 Sources associées:
 
-* config.rb : represent un ecript qui doit creer la vriable $conf, contenant la config a simuler.
- on trouvera en exemple minicong.rb et cofnfig_from_saia.rb
-* process.rb : doit lancer un thread qui agira sur des varables globale $value...
+* config.rb : represent un script qui doit creer la variable $conf, contenant la config à simuler.
+ on trouvera en exemple miniconf.rb et config_from_saia.rb
+* process.rb : doit lancer un thread qui agira sur des varables globale $value... referencées dans la config
   on trouve en exemple : process.rb , process_manque_mesure.rb, process_mesures.nomove.rb
 
 
