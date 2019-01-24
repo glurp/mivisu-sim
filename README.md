@@ -18,9 +18,17 @@ Fonctions :
 
 Usage:
 ```
-> ruby rad.rb 2200              # lance un serveur SSIL sur localhost:2200
+> ruby rad.rb 2200   config.rb process.rb  # lance un serveur SSIL sur localhost:2200
 > ruby client.rb localhost 2200 # lance un client SSIL generique, pour tester le simulateur...
 ```
+Sources associées:
+
+* config.rb : represent un ecript qui doit creer la vriable $conf, contenant la config a simuler.
+ on trouvera en exemple minicong.rb et cofnfig_from_saia.rb
+* process.rb : doit lancer un thread qui agira sur des varables globale $value...
+  on trouve en exemple : process.rb , process_manque_mesure.rb, process_mesures.nomove.rb
+
+
 
 Prerequis
 ==========
