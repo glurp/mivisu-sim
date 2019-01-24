@@ -13,7 +13,7 @@ require 'minitcp'
 require 'pp'
 
 if ARGV.size<2
- puts "Usage :  >ruby rad.rb  srv-port  [config.rb]"
+ puts "Usage :  >ruby rad.rb ip port"
  exit 0
 end
 $hostname=ARGV.shift

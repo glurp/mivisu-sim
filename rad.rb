@@ -5,7 +5,7 @@
 #   rad.rb : Simulateur RAD / Mivisu SSIL V2
 #
 # Usage :
-#    > ruby rad.rb  srv-port  [config_from_saia.rb]
+#    > ruby rad.rb  srv-port  config_from_saia.rb  process.rb
 #
 # En absence de config, l'appli genere des donnée pour une station radt mono-pm, mono capteur, un QTV
 ############################################################################
@@ -13,79 +13,63 @@ require_relative 'model.rb'
 require 'minitcp'
 require 'pp'
 
-if ARGV.size<1
- puts "Usage/ ruby rad.rb  srv-port  [config.rb]"
+if ARGV.size<3
+ puts "Usage/ ruby rad.rb  srv-port config.rb process.rb ..."
  exit 0
 end
 $port=ARGV.shift.to_i
 
+def suspens(on,off,text) 
+ Thread.new { loop {
+  sleep(rand(on*3/4..on*5/4))
+  puts "~~~~~~~~~~~~ Suspension #{text}"
+  yield(true)
+  sleep(rand(off*1/2..off*3/2))
+  puts "~~~~~~~~~~~~ Fin susp #{text}"
+  yield(false)
+ }}  
+end
+
 $conf={}
-if ARGV.size>0  
-  ARGV.each {|file| 
-    puts "Loading #{file} ========================"
+ARGV.each {|file| 
+    puts "\n\nLoading #{file} ========================"
+	puts "   #{File.read(file).split(/\r?\n/).select {|l| l=~/##\?/}.first()[3..-1].strip}\n"
 	require_relative file
-  }
-else
-  $conf={
-     frontal: {
-		user: "LABOCOM",
-		passwd: "labocom",
-	 },
-     stations: {
-	   "X40.482T" => {
-		  "31002988/1/VT/20/0000" => { value: '$valueVT'  , klif: '$klifVT' },
-		  "31002988/1/QT/20/0000" => { value: '$valueQT'  , klif: '$klifQT' },
-		  "31002988/1/TT/20/0000" => { value: '$valueTT' , klif:  '$klifTT' },
-	    }
-	 }
-  }
-end  
-###############################################################
-##   Scenarios
-###############################################################
-
-Thread.new { loop {
- if rand(1000) > 100
-	 $valueVT=Time.now.to_i % 100
-	 $valueQT=Time.now.to_i % 10
-	 $valueTT=Time.now.to_i % 60
-	 $klifVT=0
-	 $klifQT=0
-	 $klifTT=1
- else
-   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Suspension move mesures 40..60 secondes"
-   sleep rand(40..60)
-   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ fin suspension"
- end
- sleep 10
-} }
-
-sleep 0.1
+}
+puts "\n\n\n\n"
 
 
 ###############################################################
 ##   Formating message
 ###############################################################
 
+## envoie mesure de tous les capteurs de la config
 def send_mesures(socket)
  i=0
  $conf[:stations].each { |sta,hmes|
-    nbmesures=hmes.size
+    nbmesures=hmes.size 
 	i=0
     lmes=hmes.map {|repere,hm|
 	  m=eval(hm[:value])
 	  k=eval(hm[:klif])
-	  [repere,m,k]
+	  [repere,m,k] 
 	}
-	m=make_relecture_mesures(sta, Time.now, values=lmes)
-	#pp m
-	log m.inspect[0..70]
-	Header.new(rtype: Char.v("A") , version: Char.v("2") , lenmessage: m.get_binary_size , a1:0,a2:0,a3:0).write(socket)
-	m.write(socket)
+    make_send_message(socket,'A') {
+	  make_relecture_mesures(sta, Time.now, values=lmes)
+	}
+ }
+ make_send_message(socket,'N') {
+   ConpteRenduFinCycle.new(periode: 20)
  }
 end
 
-#io=StringIO.new ; send_mesures(io) ;p io.string ;exit(0)
+## envoie ETAT_SYS ETAT_COM ETAT_ALI  toutes les stations de la config
+def send_etats_techniques(socket)
+  $conf[:stations].each { |sta,pms|
+	make_send_message(socket,"C") { make_relecture_etat_technique(sta,Time.now,[1,1,1]) }
+  }
+end
+
 
 ###############################################################
 ##   reception messages 
@@ -94,9 +78,13 @@ end
 def receive_message(socket,header) 
   if header.lenmessage>0
     bmess=socket.recv(header.lenmessage) 
-	log "message recue #{header.rtype} #{bmess.inspect}"
+	log "message recue : #{header.rtype} / #{bmess.inspect}"
   else
-    log "header recue vide #{header.inspect}"
+    if header.rtype.mvalue=="y"
+	  log("message Recue : Demande Relecture")
+	else
+      log "header recue vide , code non-traite : #{header.inspect}"
+	end
   end
 end
 
@@ -105,16 +93,22 @@ end
 ###############################################################
 
 
-MServer.service($port,"0.0.0.0",22) { |socket|
+MServer.service($port,"0.0.0.0",22) do |socket|
   log "Connection client from #{socket.addr.last}"
-  send_mesures(socket) 
+  login=false
   socket.on_n_receive(9) { |data|
-     head=Header.read(data)
-     receive_message(socket,head)
+     header=Header.read(data)
+     receive_message(socket,header)
+	 if header.rtype.mvalue=="w"
+		 #send_mesures(socket) 
+		 send_etats_techniques(socket)
+		 send_mesures(socket)
+		 login=true
+	 end
   }
-  socket.on_timer(10_000) { send_mesures(socket) } 
+  socket.on_timer(10_000) { send_mesures(socket) if login} 
   socket.wait_end
   log "Deconnexion socket"
-}
+end
 sleep
 

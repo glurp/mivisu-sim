@@ -1,5 +1,8 @@
 #!/usr/bin/ruby
 #Copyright (c) 2019 Regis d'Aubarede, The MIT License
+###############################################################
+##? Config de saia, genere des valeurs selon $valueX ...
+###############################################################
 
 require 'nokogiri'
 require 'pp'
@@ -52,7 +55,7 @@ lstations= doc.xpath("/services/mivisu/var/@station").inject({}) {|h,att|  h[att
 puts "Nb Stations = #{lstations.size} ..."
 
 nbmes=0
-conf = lstations.first(3).each_with_object({}) { |sta,h|
+conf = lstations.first(355555).each_with_object({}) { |sta,h|
   hm=doc.css("/services/mivisu/var[@station=\"#{sta}\"]").each_with_object({}) {|el,hm| 
     repere=el["repere"]
 	type=repere[%r{\w+/\w+/(.+?)/},1]
@@ -61,6 +64,8 @@ conf = lstations.first(3).each_with_object({}) { |sta,h|
   nbmes+=hm.size
   h[sta]=hm if hm.size>0
 }
+
+
 $conf={
  frontal: {
 	user: "LABOCOM",
